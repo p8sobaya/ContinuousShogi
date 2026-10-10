@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#111c1b" />
+<meta name="description" content="マス目のない将棋。任意の実数座標へ駒を動かして戦う、1ファイルで動く対戦ゲーム。" />
+<title>連続将棋 — Continuous Shogi</title>
+<style>
+:root{--bg:#101b1a;--panel:#172422;--panel2:#1d2c29;--line:#35463e;--muted:#95a79d;--text:#f2eee1;--gold:#dfbd7d;--jade:#99cbb5;--coral:#e2a08c;--paper:#ead9b7}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;background:radial-gradient(ellipse 83% 40% at 48% -14%,#294037 0%,transparent 92%),var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif;-webkit-font-smoothing:antialiased}button{font:inherit;cursor:pointer}button:focus-visible,.hand-chip:focus-visible{outline:2px solid var(--jade);outline-offset:3px}button:disabled{cursor:default;opacity:.35}.shell{max-width:1350px;margin:auto;padding:26px clamp(14px,3vw,40px) 48px}.top{display:flex;justify-content:space-between;gap:22px;align-items:center;padding:0 0 25px;border-bottom:1px solid #34443e;margin-bottom:25px}.brand{display:flex;align-items:center;gap:17px}.crest{width:59px;height:59px;border-radius:50%;border:1px solid #bc9e65;display:grid;place-items:center;color:var(--gold);font-size:24px;font-family:Georgia,serif;background:linear-gradient(130deg,#27372f,#18241e);box-shadow:inset 0 0 0 5px #1a2722,inset 0 0 0 6px #755d3b}.kicker{color:var(--gold);letter-spacing:.23em;font-size:10px;font-weight:750}.brand h1{font-family:Georgia,"Yu Mincho","Hiragino Mincho ProN",serif;font-weight:650;font-size:clamp(26px,3vw,39px);letter-spacing:.11em;margin:3px 0 0}.brand h1 span{font:400 13px Georgia,serif;letter-spacing:.09em;color:#90a89d;margin-left:12px;vertical-align:middle}.top-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.toggle{display:flex;gap:3px;background:#091311;padding:4px;border:1px solid #31423a;border-radius:10px}.toggle button{border:0;color:#a4b3a6;border-radius:7px;padding:10px 13px;background:transparent;font-size:12px;font-weight:700;white-space:nowrap}.toggle button.active{background:#31473c;color:#f1f5e9;box-shadow:0 1px 4px #0006}.outline-button{border:1px solid #536459;color:#e1ddca;background:transparent;border-radius:9px;padding:11px 15px;font-size:12px;white-space:nowrap}.outline-button:hover{background:#273b31}.layout{display:grid;grid-template-columns:minmax(0,1.9fr) minmax(310px,.94fr);gap:27px;align-items:start}.board-block{min-width:0}.overline{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:13px}.overline .label{font-size:11px;letter-spacing:.18em;color:#acbaa9}.overline .micro{font-size:11px;color:#80948a;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.board-box{position:relative;background:#c5aa7b;border:1px solid #cdb78a;border-radius:7px;padding:8px;box-shadow:0 18px 60px #0005,0 2px 0 #0b1311;overflow:hidden}.board-box:before{content:"";position:absolute;inset:4px;border:1px solid #f2dfb44f;border-radius:3px;pointer-events:none}canvas{display:block;width:100%;aspect-ratio:1/1;touch-action:none;cursor:crosshair;user-select:none;-webkit-user-select:none}.below-board{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:15px 3px 0;flex-wrap:wrap}.caption{font-size:12px;color:#a8b7a7}.caption b{color:#e2c98c;font-weight:650}.coord{font:12px ui-monospace,SFMono-Regular,Consolas,monospace;background:#182723;border:1px solid #33473b;border-radius:8px;padding:9px 13px;color:#c9e4d6;font-variant-numeric:tabular-nums}.side{display:flex;flex-direction:column;gap:14px}.card{background:linear-gradient(140deg,#1e2e28,#182622);border:1px solid #33463a;border-radius:13px;padding:20px;box-shadow:0 7px 25px #060e0c2a}.card-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.small-heading{font-weight:750;font-size:12px;letter-spacing:.09em}.small-heading i{font-style:normal;color:#8b9f8f;margin-right:8px;font-weight:450}.text-mini{font-size:11px;color:#8fa49a}.turn-main{display:flex;align-items:center;gap:14px}.turn-circle{width:44px;height:44px;flex:0 0 auto;border-radius:50%;display:grid;place-items:center;font-family:serif;font-size:21px;border:1px solid #89b69e;background:#253e32;color:#b8e8c5}.turn-circle.gote{background:#442d29;color:#f1b3a1;border-color:#a3746c}.turn-circle.done{background:#3e3929;color:#e3cd8c;border-color:#b79e5b}.turn-title{font-size:22px;font-weight:750;line-height:1.4}.turn-caption{font-size:12px;color:#a8baa9;line-height:1.65;margin-top:3px}.turn-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.tag{background:#111d19;border:1px solid #3a4e40;border-radius:6px;padding:6px 9px;color:#b2c0af;font-size:11px}.tag span{color:var(--gold);font-weight:800}.hand-group+.hand-group{margin-top:16px;padding-top:14px;border-top:1px solid #31463b}.hand-title{display:flex;justify-content:space-between;font-size:11px;color:#afbcac;margin-bottom:9px}.hand-title em{font-style:normal;color:#8c9e90}.chips{display:flex;gap:7px;flex-wrap:wrap;min-height:33px}.hand-chip{height:34px;min-width:40px;border:1px solid #6e755f;background:#dbcba9;color:#342d25;border-radius:7px;padding:3px 8px;font-size:15px;font-weight:800;box-shadow:0 3px 1px #0003;position:relative}.hand-chip .qty{position:absolute;top:-7px;right:-6px;background:#303d33;color:#f6f0d9;border:1px solid #6d8272;border-radius:99px;padding:0 4px;font-size:10px}.hand-chip.gote{background:#695048;border-color:#a27c6b;color:#f8e6cb}.hand-chip.selected{outline:2px solid #a6ddbf;outline-offset:2px;transform:translateY(-1px)}.none{font-size:11px;color:#73877c;align-self:center;padding:6px 0}.card-tip{color:#95a99a;font-size:11px;line-height:1.7;margin:11px 0 0}.inline-tools{display:flex;gap:9px;margin-top:17px}.inline-tools button{flex:1;border:1px solid #506656;color:#dce6d6;background:#273c30;border-radius:8px;padding:10px;font-size:12px;font-weight:650}.inline-tools button:hover:not(:disabled){background:#35503d}.rules-card{padding-bottom:13px}.rules-intro{font-size:12px;line-height:1.8;color:#abbeaf;margin:0 0 12px}.rule-callout{padding:11px 12px;border-radius:8px;background:#2c392e;border-left:2px solid #cbb47e;color:#e7ddc3;font-size:11px;line-height:1.8;margin-bottom:14px}.rule-list{display:grid;grid-template-columns:1fr;gap:1px}.rule-item{display:grid;grid-template-columns:31px minmax(0,1fr);gap:10px;align-items:center;padding:8px 0;border-bottom:1px solid #304139}.rule-item:last-child{border:0}.symbol{display:grid;place-items:center;width:29px;height:29px;background:#d5c5a4;color:#292b22;font-size:16px;font-weight:850;clip-path:polygon(50% 0,94% 20%,94% 100%,6% 100%,6% 20%)}.rule-name{font-size:12px;font-weight:700;color:#e6e9d9}.rule-text{font-size:11px;font-weight:400;color:#95a99c;line-height:1.6;margin-top:2px}.history-content{max-height:188px;overflow:auto;scrollbar-color:#526a58 transparent;scrollbar-width:thin}.record{display:flex;gap:10px;padding:9px 0;border-top:1px solid #304339;font-size:11px;color:#b8c6b6}.record-num{font-family:monospace;color:#829b8b;min-width:22px}.record.side-gote .record-num{color:#de9e8c}.record .rec-text{line-height:1.5}.record strong{font-weight:750;color:#e8dfc8}.hint-row{display:flex;justify-content:space-between;gap:20px;padding:20px 3px 0;color:#71897a;font-size:11px;line-height:1.7}.hint-row span:last-child{font-family:ui-monospace,monospace}.legend{display:flex;gap:13px;flex-wrap:wrap;margin-top:12px}.legend span{display:flex;align-items:center;gap:7px;font-size:11px;color:#9cae9f}.dot{width:8px;height:8px;border-radius:50%;background:#3f8b70}.dot.bad{background:#bb6755}.dot.gold{background:#c5a962}.toast{position:fixed;z-index:20;bottom:25px;left:50%;transform:translate(-50%,25px);border:1px solid #7d947c;background:#213a2d;color:#e9f0e4;border-radius:12px;padding:12px 17px;font-size:13px;box-shadow:0 9px 35px #0007;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;max-width:calc(100vw - 28px);text-align:center}.toast.visible{opacity:1;transform:translate(-50%,0)}.footnote{font-size:10px;color:#637970;text-align:center;margin-top:35px;letter-spacing:.04em}.live-note{display:flex;align-items:center;gap:7px}.live-note:before{content:"";width:5px;height:5px;border-radius:50%;background:#8fba9d;box-shadow:0 0 0 3px #344e3a}.mobile-short{display:none}@media(max-width:1050px){.layout{grid-template-columns:minmax(0,1.5fr) 310px;gap:15px}.card{padding:15px}.brand h1 span{display:block;margin-left:0;font-size:11px;margin-top:3px}.brand{gap:11px}.crest{width:49px;height:49px}.top{gap:10px}}@media(max-width:760px){.shell{padding:17px 12px 30px}.top{align-items:flex-start;flex-wrap:wrap;padding-bottom:17px;margin-bottom:16px}.top-actions{width:100%;justify-content:space-between}.toggle button{padding:9px 13px}.layout{display:block}.side{margin-top:18px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.side .rules-card{grid-column:1/-1}.history-card{grid-column:1/-1}.card{padding:14px}.turn-title{font-size:18px}.overline{margin-bottom:8px}.board-box{padding:5px}.below-board{padding-top:11px}.hint-row{padding-top:10px}.footnote{margin-top:22px}}@media(max-width:450px){.brand h1{font-size:28px}.brand h1 span{display:none}.crest{width:44px;height:44px;font-size:20px}.toggle{flex:1}.toggle button{flex:1}.side{grid-template-columns:1fr}.side .rules-card,.history-card{grid-column:auto}.board-box{padding:3px}.micro{display:none}.turn-meta{margin-top:11px}.mobile-short{display:inline}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="top">
+    <div class="brand"><div class="crest" aria-hidden="true">ℝ²</div><div><div class="kicker">THE BOARD HAS NO SQUARES</div><h1>連続将棋 <span>CONTINUOUS SHOGI / β</span></h1></div></div>
+    <div class="top-actions"><div class="toggle" role="group" aria-label="対戦モード"><button id="aiMode" class="active" aria-pressed="true">ひとり × AI</button><button id="pvpMode" aria-pressed="false">ふたり対戦</button></div><button class="outline-button" id="resetTop">↻ 新しい対局</button></div>
+  </header>
+  <main class="layout">
+    <section class="board-block" aria-label="実数座標の将棋盤">
+      <div class="overline"><span class="label">BOARD / 9.0 × 9.0</span><span class="micro">ℝ² · NO SNAP · FLOAT64</span></div>
+      <div class="board-box"><canvas id="board" aria-label="将棋盤。駒をクリックし、好きな座標をクリックして移動" role="application"></canvas></div>
+      <div class="below-board"><span class="caption">任意の点を選べます。<b>マス目への吸着はありません。</b></span><span class="coord" id="coordinate">x 4.500 / y 4.500</span></div>
+      <div class="legend"><span><i class="dot"></i>移動可能な領域</span><span><i class="dot bad"></i>移動不可の地点</span><span><i class="dot gold"></i>取れる駒</span></div>
+      <div class="hint-row"><span>操作：駒を選ぶ → 行き先をクリック。ドラッグ＆ドロップでも移動可能。</span><span>ESC: 選択解除　U: 戻す</span></div>
+    </section>
+    <aside class="side">
+      <section class="card status-card" aria-live="polite">
+        <div class="card-head"><span class="small-heading"><i>01</i>対局状況</span><span class="text-mini live-note" id="phaseText">対局中</span></div>
+        <div class="turn-main"><div class="turn-circle" id="turnIcon">先</div><div><div class="turn-title" id="turnTitle">先手の番です</div><div class="turn-caption" id="turnCaption">駒を選び、好きな実数座標へ移動。</div></div></div>
+        <div class="turn-meta"><span class="tag">手数 <span id="moveCount">0</span></span><span class="tag">対局 <span id="modeLabel">VS AI</span></span><span class="tag">勝利条件 <span>王の捕獲</span></span></div>
+        <div class="inline-tools"><button id="undo">↶ 一手戻す</button><button id="resetSide">新しい対局</button></div>
+      </section>
+      <section class="card hand-card"><div class="card-head"><span class="small-heading"><i>02</i>持ち駒</span><span class="text-mini">再配置できます</span></div><div class="hand-group"><div class="hand-title"><strong>▲ 先手</strong><em>盤の下半分に打つ</em></div><div class="chips" id="senteHand"></div></div><div class="hand-group"><div class="hand-title"><strong>▽ 後手</strong><em>盤の上半分に打つ</em></div><div class="chips" id="goteHand"></div></div><p class="card-tip">相手の駒を取ると持ち駒に。自陣の好きな位置に打てます（敵の王の近くは不可）。</p></section>
+      <section class="card rules-card"><div class="card-head"><span class="small-heading"><i>03</i>この世界のルール</span><span class="text-mini">オリジナル変則将棋</span></div><p class="rules-intro">マス目は座標の目安だけ。移動距離も位置も小数で指定できます。駒によって<strong>円、扇、帯、ドーナツ</strong>など、動ける領域の形が違います。</p><div class="rule-callout">選択した駒の<strong>薄緑色</strong>が合法な移動領域。相手の駒を押すと座標がその中心に一致し、捕獲します。飛・角・香の移動線は途中の駒に遮られます。<br><b>王を取れば勝ち</b>（王手・詰み判定なし）。敵陣の奥1/3に入ると自動で成ります。</div><div class="rule-list" id="ruleList"></div></section>
+      <section class="card history-card"><div class="card-head"><span class="small-heading"><i>04</i>棋譜</span><span class="text-mini">連続座標の記録</span></div><div class="history-content" id="history"><span class="none">まだ着手されていません。</span></div></section>
+    </aside>
+  </main>
+  <div class="footnote">A SMALL EXPERIMENT IN CONTINUOUS GEOMETRY · MADE TO PLAY IN YOUR BROWSER · NO INSTALLATION</div>
+</div>
+<div id="toast" class="toast" role="status"></div>
+<script>
+(()=>{'use strict';
+const cv=document.getElementById('board'),ctx=cv.getContext('2d');
+const $=id=>document.getElementById(id), P=900,M=53,SPAN=P-2*M, BOARD=9, MIN=.43, MAX=8.57;
+const names={K:'王',R:'飛',B:'角',G:'金',S:'銀',N:'桂',L:'香',P:'歩',O:'環'};
+const promotedNames={R:'龍',B:'馬',S:'全',N:'圭',L:'杏',P:'と'};
+const pieceVals={K:1000,R:8,B:7,G:5,S:4,N:4,L:3,P:2,O:5};
+const descriptions=[
+ ['K','半径 1.35 の円内。向きは自由。'],
+ ['R','縦横の細い帯を最大 6.4。途中の駒は飛び越え不可。'],
+ ['B','斜め45°の細い帯を最大 6.5。途中の駒は飛び越え不可。'],
+ ['G','前・横は半径 1.6、後ろは幅の狭い帯で 1.08。'],
+ ['S','前方の扇形、または後方の斜め帯。最大 1.95。'],
+ ['N','前に 1.45〜2.65、左右に 0.75〜1.80 跳躍。'],
+ ['L','前方の細帯を最大 5.0。途中の駒は越えない。'],
+ ['P','前に最大 1.2、左右 ±0.30 の細帯。'],
+ ['O','半径 1.55〜2.45 の輪の中だけに跳躍する新駒。']
+];
+$('ruleList').innerHTML=descriptions.map(([k,v])=>`<div class="rule-item"><span class="symbol">${names[k]}</span><div><div class="rule-name">${names[k]} <span class="rule-text">${v}</span></div></div></div>`).join('');
+const initial=[['R',.99,7.92],['N',2.15,7.92],['S',3.32,7.92],['K',4.50,7.92],['G',5.68,7.92],['O',6.86,7.92],['B',8.03,7.92],['L',1.25,6.73],['P',4.48,6.51]];
+let idSeed=0,mode='ai',pieces=[],hands={sente:[],gote:[]},turn='sente',moveCount=0,finished=false,winner=null,selected=null,hover=null,log=[],snapshots=[],dragging=false,pointerStart=null,mask=null,aiTimer=null,flashTime=0,toastTimer=null;
+const opponent=side=>side==='sente'?'gote':'sente';
+const direction=side=>side==='sente'?-1:1;
+const worldToScreen=p=>({x:M+p.x/BOARD*SPAN,y:M+p.y/BOARD*SPAN});
+const screenToWorld=p=>({x:(p.x-M)/SPAN*BOARD,y:(p.y-M)/SPAN*BOARD});
+const dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);
+const inBounds=p=>p&&Number.isFinite(p.x)&&Number.isFinite(p.y)&&p.x>=MIN&&p.x<=MAX&&p.y>=MIN&&p.y<=MAX;
+const fmt=v=>v.toFixed(3);
+function clone(v){return JSON.parse(JSON.stringify(v))}
+function reset(){clearTimeout(aiTimer);idSeed=0;pieces=[];for(const side of ['sente','gote'])for(const [type,x,y]of initial)pieces.push({id:++idSeed,type,side,x:side==='sente'?x:9-x,y:side==='sente'?y:9-y,promoted:false});hands={sente:[],gote:[]};turn='sente';moveCount=0;finished=false;winner=null;selected=null;hover=null;log=[];snapshots=[];dragging=false;mask=null;pointerStart=null;renderAll();toast(mode==='ai'?'AIとの対局を開始しました':'ふたり対戦を開始しました')}
+function isMyTurn(){return !finished && !(mode==='ai'&&turn==='gote')}
+function isKing(p){return p.type==='K'}
+function label(p){return p.promoted?(promotedNames[p.type]||names[p.type]):names[p.type]}
+function pattern(p,to){
+ const dx=to.x-p.x,dy=to.y-p.y,d=Math.hypot(dx,dy),ad=Math.abs(dx),ay=Math.abs(dy),f=dy*direction(p.side);
+ if(d<.075)return null;
+ const type=p.type;
+ const circle=rad=>d<=rad?{slide:false}:null;
+ const gold=()=> d<=1.6 && (f>=-.08||(f>=-1.08&&ad<=.35))?{slide:false}:null;
+ const rook=()=>d<=6.4&&Math.min(ad,ay)<=.22+d*.015?{slide:true}:null;
+ const bishop=()=>d<=6.5&&Math.abs(ad-ay)<=.24+d*.018?{slide:true}:null;
+ if(type==='K')return circle(1.35);
+ if(type==='G')return gold();
+ if(p.promoted&&['S','N','L','P'].includes(type))return gold();
+ if(type==='R')return rook()||(p.promoted&&d<=1.18?{slide:false}:null);
+ if(type==='B')return bishop()||(p.promoted&&d<=1.18?{slide:false}:null);
+ if(type==='S')return d<=1.95&&((f>=.07&&ad<=1.23*f+.34)||(f<=-.13&&Math.abs(ad+f)<=.43))?{slide:false}:null;
+ if(type==='N')return f>=1.45&&f<=2.65&&ad>=.75&&ad<=1.80?{slide:false}:null;
+ if(type==='L')return f>=.16&&f<=5&&ad<=.14+.04*f?{slide:true}:null;
+ if(type==='P')return f>=.13&&f<=1.2&&ad<=.30?{slide:false}:null;
+ if(type==='O')return d>=1.55&&d<=2.45?{slide:false}:null;
+ return null;
+}
+function segmentDistance(v,a,b){let vx=b.x-a.x,vy=b.y-a.y,len=vx*vx+vy*vy;if(len<1e-9)return {d:dist(v,a),t:0};let t=((v.x-a.x)*vx+(v.y-a.y)*vy)/len;return{d:Math.hypot(v.x-a.x-t*vx,v.y-a.y-t*vy),t};}
+function moveResult(p,raw,board=pieces){
+ if(!inBounds(raw))return null;
+ let target=null,closest=.59;
+ for(const q of board){if(q.id===p.id)continue;const d=dist(raw,q);if(d<closest){closest=d;target=q}}
+ if(target&&target.side===p.side)return null;
+ const to=target?{x:target.x,y:target.y}:{x:raw.x,y:raw.y};
+ if(!inBounds(to))return null;
+ if(!target){for(const q of board)if(q.id!==p.id&&dist(to,q)<.71)return null;}
+ const movement=pattern(p,to);if(!movement)return null;
+ if(movement.slide){for(const q of board){if(q.id===p.id||(target&&q.id===target.id))continue;const s=segmentDistance(q,p,to);if(s.t>.015&&s.t<.985&&s.d<.57)return null;}}
+ return {to,capture:target||null};
+}
+function dropResult(type,side,to,board=pieces){
+ if(!inBounds(to))return false;
+ if(side==='sente'&&to.y<4.5||side==='gote'&&to.y>4.5)return false;
+ for(const p of board){if(dist(p,to)<.79)return false;if(p.type==='K'&&p.side!==side&&dist(p,to)<1.6)return false;}
+ return true;
+}
+function evaluateSelection(to){if(!selected)return null;if(selected.kind==='piece'){const p=pieces.find(v=>v.id===selected.id);return p?moveResult(p,to):null;}return dropResult(selected.type,turn,to)?{to,drop:true}:null;}
+function prepareMask(){if(!selected){mask=null;return;}const size=183,aux=document.createElement('canvas');aux.width=aux.height=size;let ac=aux.getContext('2d');const pixels=ac.createImageData(size,size);let idx=0;
+ for(let iy=0;iy<size;iy++){for(let ix=0;ix<size;ix++){const to={x:(ix+.5)/size*9,y:(iy+.5)/size*9};const valid=evaluateSelection(to);if(valid){pixels.data[idx]=33;pixels.data[idx+1]=145;pixels.data[idx+2]=109;pixels.data[idx+3]=51;}idx+=4;}}
+ ac.putImageData(pixels,0,0);mask=aux;
+}
+function choose(sel){selected=sel;prepareMask();render();renderHands();}
+function snapshot(){snapshots.push({pieces:clone(pieces),hands:clone(hands),turn,moveCount,finished,winner,log:clone(log)});if(snapshots.length>230)snapshots.shift()}
+function restoreLast(){const prev=snapshots.pop();if(!prev)return false;pieces=prev.pieces;hands=prev.hands;turn=prev.turn;moveCount=prev.moveCount;finished=prev.finished;winner=prev.winner;log=prev.log;selected=null;mask=null;return true}
+function checkPromotion(p){if(!['R','B','S','N','L','P'].includes(p.type)||p.promoted)return false;const zone=p.side==='sente'?p.y<=3:p.y>=6;if(zone){p.promoted=true;return true;}return false;}
+function applyAction(action){if(finished)return false;
+ const side=turn;let desc='',captured=null,promoted=false;
+ if(action.kind==='move'){
+  const p=pieces.find(z=>z.id===action.id&&z.side===side);if(!p)return false;
+  const result=moveResult(p,action.to);if(!result)return false;
+  snapshot();const originalName=label(p);
+  if(result.capture){captured=result.capture;pieces=pieces.filter(q=>q.id!==captured.id);if(captured.type!=='K')hands[side].push(captured.type);}
+  p.x=result.to.x;p.y=result.to.y;promoted=checkPromotion(p);
+  desc=`${originalName} → (${fmt(p.x)}, ${fmt(p.y)})${captured?' · '+label(captured)+'を取る':''}${promoted?' · 成':''}`;
+ }else if(action.kind==='drop'){
+  const index=hands[side].indexOf(action.type);if(index<0||!dropResult(action.type,side,action.to))return false;
+  snapshot();hands[side].splice(index,1);pieces.push({id:++idSeed,type:action.type,side,x:action.to.x,y:action.to.y,promoted:false});desc=`${names[action.type]} 打 → (${fmt(action.to.x)}, ${fmt(action.to.y)})`;
+ }else return false;
+ moveCount++;log.unshift({n:moveCount,side,desc});if(log.length>200)log.pop();
+ if(captured&&captured.type==='K'){finished=true;winner=side;toast(`${side==='sente'?'先手':'後手'}の勝ち！ 王を捕獲しました。`)}
+ if(moveCount>=220&&!finished){finished=true;winner='draw';toast('220手に達しました。引き分けです。')}
+ if(!finished)turn=opponent(side);selected=null;mask=null;hover=null;renderAll();if(!finished&&mode==='ai'&&turn==='gote'){clearTimeout(aiTimer);aiTimer=setTimeout(aiPlay,390)}return true;
+}
+function tryMove(point){if(!selected||!isMyTurn())return false;let action;if(selected.kind==='piece')action={kind:'move',id:selected.id,to:point};else action={kind:'drop',type:selected.type,to:point};const okay=applyAction(action);if(!okay){flashTime=performance.now()+230;render();}return okay;}
+function undo(){clearTimeout(aiTimer);if(!snapshots.length)return;let wasAI=mode==='ai';restoreLast();if(wasAI&&turn==='gote'&&snapshots.length)restoreLast();hover=null;renderAll();toast('一手戻しました')}
+function getPieceAt(pt){let picked=null,min=.45;for(let i=pieces.length-1;i>=0;i--){let p=pieces[i],d=dist(p,pt);if(d<min){min=d;picked=p;}}return picked;}
+function canvasPoint(e){const rect=cv.getBoundingClientRect();return screenToWorld({x:(e.clientX-rect.left)/rect.width*P,y:(e.clientY-rect.top)/rect.height*P});}
+cv.addEventListener('pointerdown',e=>{if(!isMyTurn())return;e.preventDefault();const pt=canvasPoint(e),own=getPieceAt(pt);pointerStart={screenX:e.clientX,screenY:e.clientY,pt,wasSelection:selected?{...selected}:null,piece:own?.side===turn?own:null};dragging=false;
+ if(own&&own.side===turn){choose({kind:'piece',id:own.id});}
+ try{cv.setPointerCapture(e.pointerId)}catch{}
+});
+cv.addEventListener('pointermove',e=>{hover=canvasPoint(e);$('coordinate').textContent=`x ${fmt(hover.x)} / y ${fmt(hover.y)}`;if(pointerStart&&Math.hypot(e.clientX-pointerStart.screenX,e.clientY-pointerStart.screenY)>7)dragging=true;render();});
+cv.addEventListener('pointerup',e=>{if(!pointerStart)return;const pt=canvasPoint(e),start=pointerStart;pointerStart=null;let own=getPieceAt(pt);
+ if(dragging){dragging=false;if(start.piece){if(dist(pt,start.piece)>.46)tryMove(pt);}else if(start.wasSelection){tryMove(pt);}return;}
+ if(start.piece)return;
+ if(start.wasSelection){if(own&&own.side===turn){choose({kind:'piece',id:own.id});return;}tryMove(pt);} 
+});
+cv.addEventListener('pointercancel',()=>{pointerStart=null;dragging=false;render()});
+cv.addEventListener('pointerleave',()=>{if(!pointerStart){hover=null;render()}});
+window.addEventListener('keydown',e=>{if(e.key==='Escape'){choose(null)}else if((e.key==='u'||e.key==='U')&&!e.ctrlKey&&!e.metaKey){undo()}else if((e.key==='r'||e.key==='R')&&!e.ctrlKey&&!e.metaKey){reset()}});
+function activateMode(which){if(mode===which)return;mode=which;$('aiMode').classList.toggle('active',mode==='ai');$('pvpMode').classList.toggle('active',mode==='pvp');$('aiMode').setAttribute('aria-pressed',mode==='ai');$('pvpMode').setAttribute('aria-pressed',mode==='pvp');reset()}
+$('aiMode').addEventListener('click',()=>activateMode('ai'));$('pvpMode').addEventListener('click',()=>activateMode('pvp'));
+$('resetTop').addEventListener('click',reset);$('resetSide').addEventListener('click',reset);$('undo').addEventListener('click',undo);
+function renderHands(){for(const side of ['sente','gote']){const root=$(side+'Hand');const tally={};for(const k of hands[side])tally[k]=(tally[k]||0)+1;const canChoose=isMyTurn()&&side===turn;
+ root.innerHTML=Object.keys(tally).sort((a,b)=>pieceVals[b]-pieceVals[a]).map(type=>`<button type="button" class="hand-chip ${side==='gote'?'gote':''} ${selected?.kind==='hand'&&selected.type===type&&canChoose?'selected':''}" data-side="${side}" data-type="${type}" ${canChoose?'':'disabled'} aria-label="${names[type]}を盤上に打つ">${names[type]}${tally[type]>1?`<span class="qty">×${tally[type]}</span>`:''}</button>`).join('')||'<span class="none">まだありません</span>';}
+}
+for(const s of ['senteHand','goteHand'])$(s).addEventListener('click',e=>{const btn=e.target.closest('[data-type]');if(!btn||btn.disabled)return;choose({kind:'hand',type:btn.dataset.type})});
+function renderStatus(){let turnName=turn==='sente'?'先手':'後手',aiTurn=mode==='ai'&&turn==='gote';$('turnIcon').className='turn-circle'+(finished?' done':turn==='gote'?' gote':'');$('turnIcon').textContent=finished?'終':turn==='sente'?'先':'後';$('phaseText').textContent=finished?'対局終了':aiTurn?'AI が思考中':'対局中';$('turnTitle').textContent=finished?(winner==='draw'?'引き分け':(winner==='sente'?'先手':'後手')+'の勝ち！'):aiTurn?'AI の手番です':turnName+'の番です';$('turnCaption').textContent=finished?'「新しい対局」で再戦できます。':aiTurn?'次の一手を選んでいます…':selected?'淡い緑の領域に移動できます。':'駒を選び、好きな実数座標へ移動。';$('moveCount').textContent=moveCount;$('modeLabel').textContent=mode==='ai'?'VS AI':'2人対戦';$('undo').disabled=snapshots.length===0;
+ $('history').innerHTML=log.length?log.slice(0,10).map(r=>`<div class="record ${r.side==='gote'?'side-gote':''}"><span class="record-num">${String(r.n).padStart(2,'0')}</span><span class="rec-text"><strong>${r.side==='sente'?'▲':'▽'}</strong> ${r.desc}</span></div>`).join(''):'<span class="none">まだ着手されていません。</span>';
+}
+function renderAll(){render();renderHands();renderStatus()}
+function toast(message){const t=$('toast');clearTimeout(toastTimer);t.textContent=message;t.classList.add('visible');toastTimer=setTimeout(()=>t.classList.remove('visible'),2350)}
+function drawBoard(){const g=ctx.createLinearGradient(0,0,P,P);g.addColorStop(0,'#f0e0c0');g.addColorStop(.51,'#e3cca5');g.addColorStop(1,'#d5bb8f');ctx.fillStyle=g;ctx.fillRect(0,0,P,P);
+ // Subtle, deterministic paper grain / parallel fibers
+ ctx.save();ctx.globalAlpha=.07;for(let i=0;i<180;i++){let y=(i*153.49)%P;ctx.strokeStyle=i%4?'#fff4d7':'#8b683c';ctx.lineWidth=(i%7===0)?1.4:.5;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(P,y+Math.sin(i*2)*.7);ctx.stroke();}ctx.restore();
+ ctx.strokeStyle='#71593780';ctx.lineWidth=1.2;ctx.strokeRect(M,M,SPAN,SPAN);
+ for(let i=1;i<9;i++){let t=M+i/9*SPAN;ctx.beginPath();ctx.lineWidth=i===3||i===6?1.10:.77;ctx.strokeStyle=i===3||i===6?'#69573a72':'#7360404b';ctx.moveTo(t,M);ctx.lineTo(t,P-M);ctx.moveTo(M,t);ctx.lineTo(P-M,t);ctx.stroke();}
+ // continuous coordinate guides (not actual squares)
+ ctx.fillStyle='#826d48';ctx.font='12px ui-monospace,monospace';ctx.textAlign='center';ctx.textBaseline='middle';for(let i=0;i<=9;i+=3){let pos=M+i/9*SPAN;ctx.fillText(i.toString(),pos,29);ctx.fillText(i.toString(),27,pos+1)}
+ for(const [x,y]of [[3,3],[6,3],[3,6],[6,6],[4.5,4.5]]){let p=worldToScreen({x,y});ctx.beginPath();ctx.arc(p.x,p.y,x===4.5?3.3:2.3,0,Math.PI*2);ctx.fillStyle='#6c5b3979';ctx.fill();}
+ ctx.font='bold 12px Georgia,serif';ctx.fillStyle='#735e3a8c';ctx.textAlign='right';ctx.fillText('ℝ²',P-16,P-16);
+}
+function pentagonPath(x,y,r,side){ctx.beginPath();const flip=side==='sente'?1:-1;const xy=[[0,-1.10],[.72,-.64],[.80,.96],[-.80,.96],[-.72,-.64]];xy.forEach((pt,i)=>{const X=x+pt[0]*r,Y=y+pt[1]*r*flip;i?ctx.lineTo(X,Y):ctx.moveTo(X,Y)});ctx.closePath()}
+function drawPiece(p,options={}){const pos=worldToScreen(p),r=34,selectedPiece=selected?.kind==='piece'&&selected.id===p.id,ghost=options.ghost;
+ ctx.save();if(ghost)ctx.globalAlpha=options.ok?.77:.46;
+ if(selectedPiece&&!ghost){ctx.beginPath();ctx.arc(pos.x,pos.y,44,0,Math.PI*2);ctx.fillStyle='#e5bd647d';ctx.fill();ctx.strokeStyle='#f5ecaa';ctx.lineWidth=2;ctx.stroke();}
+ ctx.shadowColor=ghost?'transparent':'#3e251f5a';ctx.shadowBlur=9;ctx.shadowOffsetY=5;
+ pentagonPath(pos.x,pos.y,r,p.side);
+ const fill=ctx.createLinearGradient(pos.x-r,pos.y-r,pos.x+r,pos.y+r);if(p.side==='sente'){fill.addColorStop(0,'#fcf4dc');fill.addColorStop(.65,'#e1cc9f');fill.addColorStop(1,'#c9aa74')}else{fill.addColorStop(0,'#7a6252');fill.addColorStop(1,'#493b34')}
+ ctx.fillStyle=fill;ctx.fill();ctx.shadowBlur=0;ctx.shadowOffsetY=0;ctx.strokeStyle=p.side==='sente'?'#836b48':'#9f7d65';ctx.lineWidth=2.2;ctx.stroke();
+ ctx.font=`${p.type==='K'?29:27}px "Yu Mincho","Hiragino Mincho ProN",serif`;ctx.font='bold '+(p.type==='K'?29:27)+'px "Yu Mincho","Hiragino Mincho ProN",serif';ctx.fillStyle=p.promoted?(p.side==='sente'?'#a34636':'#f6bb9d'):(p.side==='sente'?'#322a1d':'#f4e7cb');ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label(p),pos.x,pos.y+6);
+ if(p.promoted){ctx.beginPath();ctx.arc(pos.x+18,pos.y-17,3,0,Math.PI*2);ctx.fillStyle=p.side==='sente'?'#b44c3f':'#f6bea3';ctx.fill()}
+ if(p.type==='O'){ctx.beginPath();ctx.arc(pos.x,pos.y+10,25,0,2*Math.PI);ctx.lineWidth=.9;ctx.strokeStyle=p.side==='sente'?'#7f6550a1':'#ffedc799';ctx.stroke()}
+ ctx.restore();
+}
+function drawHover(){if(!hover||!selected||!isMyTurn())return;if(!inBounds(hover))return;const result=evaluateSelection(hover),pt=worldToScreen(result?.to||hover),ok=!!result;
+ if(selected.kind==='piece'){const p=pieces.find(v=>v.id===selected.id);if(p){const from=worldToScreen(p);ctx.save();ctx.setLineDash([8,6]);ctx.strokeStyle=ok?'#32795cb0':'#bd6759a3';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(from.x,from.y);ctx.lineTo(pt.x,pt.y);ctx.stroke();ctx.restore();}}
+ ctx.beginPath();ctx.arc(pt.x,pt.y,36,0,Math.PI*2);ctx.fillStyle=ok?'#72d7a22a':'#b9575022';ctx.fill();ctx.strokeStyle=ok?'#397e61':'#b65852';ctx.lineWidth=2.4;ctx.stroke();ctx.beginPath();ctx.moveTo(pt.x-7,pt.y);ctx.lineTo(pt.x+7,pt.y);ctx.moveTo(pt.x,pt.y-7);ctx.lineTo(pt.x,pt.y+7);ctx.stroke();
+ if(result?.capture){ctx.textAlign='center';ctx.fillStyle='#8a442c';ctx.font='bold 16px sans-serif';ctx.fillText('取',pt.x,pt.y-42)}
+ let bx=Math.min(Math.max(pt.x-73,67),P-188),by=pt.y>90?pt.y-68:pt.y+57;ctx.fillStyle=ok?'#233f30':'#5c3733';ctx.beginPath();ctx.roundRect(bx,by,145,29,6);ctx.fill();ctx.font='12px ui-monospace,monospace';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle='#fff6db';ctx.fillText(fmt(result?.to.x??hover.x)+', '+fmt(result?.to.y??hover.y),bx+72.5,by+15);
+}
+function render(){const dpr=Math.min(window.devicePixelRatio||1,2);const rect=cv.getBoundingClientRect(),w=Math.max(250,Math.round(rect.width*dpr));if(cv.width!==w||cv.height!==w){cv.width=w;cv.height=w}ctx.setTransform(w/P,0,0,w/P,0,0);ctx.clearRect(0,0,P,P);drawBoard();
+ if(mask){ctx.save();ctx.drawImage(mask,M,M,SPAN,SPAN);ctx.restore();}
+ for(const p of pieces){const pt=worldToScreen(p);if(p.type==='K'){ctx.beginPath();ctx.arc(pt.x,pt.y,41,0,2*Math.PI);ctx.strokeStyle=p.side==='sente'?'#6b8c5b89':'#915b4c99';ctx.lineWidth=2;ctx.stroke();}}
+ for(const p of pieces){if(dragging&&pointerStart?.piece?.id===p.id&&selected?.kind==='piece')continue;drawPiece(p)}
+ if(dragging&&pointerStart?.piece&&selected?.kind==='piece'&&hover){drawPiece({...pointerStart.piece,x:hover.x,y:hover.y},{ghost:true,ok:!!evaluateSelection(hover)})}
+ drawHover();if(flashTime>performance.now()&&hover){ctx.beginPath();const at=worldToScreen(hover);ctx.arc(at.x,at.y,41,0,2*Math.PI);ctx.strokeStyle='#d75040';ctx.lineWidth=5;ctx.stroke()}
+ if(finished){ctx.fillStyle='#101c18b5';ctx.fillRect(0,P/2-88,P,176);ctx.textAlign='center';ctx.fillStyle='#f0dfb1';ctx.font='bold 38px "Yu Mincho",serif';ctx.fillText(winner==='draw'?'引き分け':winner==='sente'?'先手の勝利':'後手の勝利',P/2,P/2-8);ctx.fillStyle='#e0e5d6';ctx.font='17px sans-serif';ctx.fillText('もう一局、どうぞ。',P/2,P/2+32)}
+}
+// Casual opponent: continuous-move sampling, immediate captures and tactical threat avoidance.
+function random(a,b){return a+Math.random()*(b-a)}
+function propose(p){let t=p.type;const z=p.promoted;let x=0,y=0,sg=direction(p.side),f=random(.1,1.5),sgn=Math.random()<.5?-1:1;
+ if(t==='K'||t==='G'||t==='S'||(z&&['N','L','S','P'].includes(t))){const a=random(-Math.PI,Math.PI),r=random(.18,z?1.6:(t==='S'?1.95:1.6));x=Math.cos(a)*r;y=Math.sin(a)*r;}
+ else if(t==='R'){if(z&&Math.random()<.18){let a=random(-Math.PI,Math.PI),r=random(.2,1.18);x=Math.cos(a)*r;y=Math.sin(a)*r}else if(Math.random()<.5){x=sgn*random(.2,6.4);y=random(-.17,.17)}else{x=random(-.17,.17);y=sgn*random(.2,6.4)}}
+ else if(t==='B'){if(z&&Math.random()<.18){let a=random(-Math.PI,Math.PI),r=random(.2,1.18);x=Math.cos(a)*r;y=Math.sin(a)*r}else{let m=random(.2,4.5);x=sgn*m;y=(Math.random()<.5?-1:1)*m+random(-.1,.1)}}
+ else if(t==='N'){x=sgn*random(.77,1.75);y=sg*random(1.5,2.6)}
+ else if(t==='L'){x=random(-.11,.11);y=sg*random(.2,5.0)}
+ else if(t==='P'){x=random(-.24,.24);y=sg*random(.16,1.18)}
+ else if(t==='O'){let a=random(-Math.PI,Math.PI),r=random(1.58,2.4);x=Math.cos(a)*r;y=Math.sin(a)*r;}
+ return{x:p.x+x,y:p.y+y};
+}
+function isAttacked(victim,board){if(!victim)return false;for(const other of board){if(other.side===victim.side)continue;const res=moveResult(other,{x:victim.x,y:victim.y},board);if(res?.capture?.id===victim.id)return true;}return false;}
+function scoreCandidate(p,res){let score=Math.random()*2.3;const targetKing=pieces.find(q=>q.side==='sente'&&q.type==='K');
+ if(res.capture)score+=res.capture.type==='K'?100000:pieceVals[res.capture.type]*13.8;
+ const after=pieces.filter(q=>!res.capture||q.id!==res.capture.id).map(q=>q.id===p.id?{...q,x:res.to.x,y:res.to.y,promoted:q.promoted||(q.side==='gote'&&res.to.y>=6&&['R','B','S','N','L','P'].includes(q.type))}:q);
+ const moved=after.find(q=>q.id===p.id),ownKing=after.find(q=>q.type==='K'&&q.side==='gote');
+ if(targetKing&&p.type!=='K')score+=Math.max(-3,Math.min(3,dist(p,targetKing)-dist(res.to,targetKing)))*1.45;
+ score+=Math.max(-2,Math.min(2,(res.to.y-p.y)))*.95;
+ if(!p.promoted&&moved.promoted)score+=9;
+ if(isAttacked(moved,after))score-=p.type==='K'?140:(pieceVals[p.type]*4.7);
+ if(isAttacked(ownKing,after))score-=65;
+ if(p.type==='K'&&targetKing&&dist(res.to,targetKing)<1.5)score-=3.5;
+ return score;
+}
+function scoreDrop(type,to){let score=Math.random()*3;const king=pieces.find(q=>q.side==='sente'&&q.type==='K');if(king)score+=Math.max(-4,4-dist(to,king))*1.4;score+=(4.5-to.y)*.8;score+=type==='O'?2:0;return score;}
+function aiPlay(){aiTimer=null;if(finished||mode!=='ai'||turn!=='gote')return;let options=[];
+ for(const p of pieces.filter(q=>q.side==='gote')){
+   for(const q of pieces.filter(q=>q.side==='sente')){const res=moveResult(p,q);if(res?.capture)options.push({score:scoreCandidate(p,res),action:{kind:'move',id:p.id,to:res.to}})}
+   for(let i=0;i<115;i++){let raw=propose(p),res=moveResult(p,raw);if(res)options.push({score:scoreCandidate(p,res),action:{kind:'move',id:p.id,to:res.to}})}
+ }
+ const uniqueHands=[...new Set(hands.gote)];for(const type of uniqueHands){for(let i=0;i<58;i++){let to={x:random(.45,8.55),y:random(.45,4.50)};if(dropResult(type,'gote',to))options.push({score:scoreDrop(type,to),action:{kind:'drop',type,to}})}}
+ if(options.length){options.sort((a,b)=>b.score-a.score);let top=options.slice(0,Math.min(5,options.length));let pick=top[Math.floor(Math.pow(Math.random(),2.4)*top.length)];applyAction(pick.action)}else{finished=true;winner='draw';renderAll();toast('AIが動ける場所を失いました。引き分けです。')}
+}
+window.addEventListener('resize',()=>render());
+// Allow testers to inspect logic without exposing internal mutable state.
+window.continuousShogi={getState:()=>clone({mode,pieces,hands,turn,moveCount,finished,winner,log}),reset,undo,setMode:activateMode,move:(id,x,y)=>applyAction({kind:'move',id,to:{x,y}}),drop:(type,x,y)=>applyAction({kind:'drop',type,to:{x,y}}),legal:(id,x,y)=>{const p=pieces.find(q=>q.id===id);return p?moveResult(p,{x,y}):null}};
+reset();
+})();
+</script>
+</body>
+</html>
